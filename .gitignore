@@ -1,3 +1,10 @@
+# Visual Studio related ignores
+.vs/
+
+# C++ related ignores
+/out
+
+# CMake related ignores
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
