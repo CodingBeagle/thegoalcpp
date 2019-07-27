@@ -1,8 +1,11 @@
+# Library related ignores
+/libs
+
 # Visual Studio related ignores
 .vs/
 
 # C++ related ignores
-/out
+build/
 
 # CMake related ignores
 CMakeCache.txt
