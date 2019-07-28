@@ -5,9 +5,7 @@ add_executable(thegoal)
 
 set_target_properties(thegoal PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${thegoal_SOURCE_DIR}/build")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${thegoal_SOURCE_DIR}/build")
-
-target_sources(thegoal PRIVATE main.cpp ${thegoal_SOURCE_DIR}/libs/glad/src/glad.c)
+target_sources(thegoal PRIVATE main.cpp Shader.cpp ${thegoal_SOURCE_DIR}/libs/glad/src/glad.c)
 
 # Specify where to search for library files
 target_link_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/libs/glfw/bin)
@@ -20,6 +18,7 @@ target_link_libraries(thegoal glfw3.lib opengl32.lib)
 # for include files. Relative paths are relative to the current source 
 target_include_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/libs/glfw/include)
 target_include_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/libs/glad/include)
+target_include_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/libs/glm/include)
 target_include_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/include)
 
 # A custom build rule which will copy all shader files to the output directory
