@@ -178,10 +178,21 @@ int main()
 	while (!glfwWindowShouldClose(mainWindow.get())) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Our model matrix
 		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		myShader.setMatrix("transform", trans);
+		// Our view matrix
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+		// Our projection matrix
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+		myShader.setMatrix("model", trans);
+		myShader.setMatrix("view", view);
+		myShader.setMatrix("projection", projection);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
