@@ -3,9 +3,10 @@
 # The given name must be globally unique within a project.
 add_executable(thegoal)
 
-set_target_properties(thegoal PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${thegoal_SOURCE_DIR}/build")
-
+# The target_sources command can be used to give the source files which the exe is based upon
 target_sources(thegoal PRIVATE main.cpp Shader.cpp ${thegoal_SOURCE_DIR}/libs/glad/src/glad.c)
+
+set_target_properties(thegoal PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${thegoal_SOURCE_DIR}/build")
 
 # Specify where to search for library files
 target_link_directories(thegoal PRIVATE ${thegoal_SOURCE_DIR}/libs/glfw/bin)

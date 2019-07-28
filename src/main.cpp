@@ -11,6 +11,12 @@
 
 #include "Shader.hpp"
 
+// OpenGL Debug Output Message callback
+void APIENTRY openGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+
+// GLFW key callback
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 // GLFWWindow is fully defined, thus we need to create our own custom deleter
 // When creating a smart pointer for the GLFWWindow type.;
 struct DestroyGlfwWindow {
@@ -42,9 +48,13 @@ int main()
 	}
 
 	// Set window hints
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// Enable an OpenGL Debugging context so that we can use the
+	// OpenGL Debug Output feature
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 	std::unique_ptr<GLFWwindow, DestroyGlfwWindow> 
 		mainWindow(glfwCreateWindow(800, 600, "The Goal.", nullptr, nullptr));
@@ -54,6 +64,8 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
+	glfwSetKeyCallback(mainWindow.get(), glfwKeyCallback);
 
 	glfwMakeContextCurrent(mainWindow.get());
 
@@ -78,6 +90,11 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
+	// We register the OpenGL Debug Message callback
+	// This feature has been in the OpenGL core profile since 4.3
+	// Before that, it's an extension by the name of "KHR_Debug"
+	glDebugMessageCallback(openGlErrorCallback, nullptr);
 
 	glViewport(0, 0, 800, 600);
 
@@ -155,21 +172,55 @@ int main()
 
 	glBindVertexArray(VAO);
 
-	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	myShader.setMatrix("transform", trans);
+	float rotation = 0;
 
 	glClearColor(0.4f, 0.58f, 0.92f, 1.0f);
 	while (!glfwWindowShouldClose(mainWindow.get())) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		myShader.setMatrix("transform", trans);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		rotation += 0.5;
+
 		glfwSwapBuffers(mainWindow.get());
+
+		// Processes input events which has already been received and then returns immediately
+		// This is the best choice for applications that render continously, like games.
 		glfwPollEvents();
 	}
 
 	glfwTerminate();
 	return 0;
+}
+
+bool wireframeToggle = false;
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		if (!wireframeToggle)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			wireframeToggle = true;
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			wireframeToggle = false;
+		}
+	}
+}
+
+void APIENTRY openGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	std::cout << "**** OpenGL Debug Message ****" << std::endl;
+	std::cout << "Debug Message: " << message << std::endl;
+	std::cout << "Source: " << source << std::endl;
+	std::cout << "Type: " << type << std::endl;
+	std::cout << "******************************" << std::endl;
 }
