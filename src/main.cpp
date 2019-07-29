@@ -34,6 +34,51 @@ float vertices[] = {
 	-0.5f,  0.5f, 0.0f, 0.5f, 0.5f, 1.0f // top left
 };
 
+// Cube Vertex Data
+float verticesCube[] = {
+	-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 0.5f, 0.5f, 0.2f,
+	-0.5f,  0.5f, -0.5f, 0.7f, 0.9f, 0.5f,
+	-0.5f, -0.5f, -0.5f, 0.2f, 0.3f, 0.1f,
+
+	-0.5f, -0.5f,  0.5f, 0.1f, 0.3f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.5f, 0.5f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.4f, 1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.3f, 0.3f, 0.3f,
+	-0.5f,  0.5f,  0.5f, 0.1f, 0.1f, 0.1f,
+	-0.5f, -0.5f,  0.5f, 0.5f, 0.5f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, 0.1f, 1.0f, 0.1f,
+	-0.5f,  0.5f, -0.5f, 1.0f, 0.2f, 0.2f,
+	-0.5f, -0.5f, -0.5f, 0.2f, 0.2f, 0.2f,
+	-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f, 0.1f, 0.2f, 0.9f,
+	 0.5f,  0.5f, -0.5f, 0.9f, 0.8f, 0.7f,
+	 0.5f, -0.5f, -0.5f, 0.1f, 1.0f, 0.1f,
+	 0.5f, -0.5f, -0.5f, 0.4f, 0.2f, 0.1f,
+	 0.5f, -0.5f,  0.5f, 1.0f, 0.9f, 0.8f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
+
+	-0.5f, -0.5f, -0.5f, 0.1f, 1.0f, 0.1f,
+	 0.5f, -0.5f, -0.5f, 1.0f, 0.2f, 0.8f,
+	 0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.1f, 0.2f, 0.3f,
+	-0.5f, -0.5f,  0.5f, 1.0f, 0.1f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.1f, 0.1f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f, 0.1f, 1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 1.0f, 0.1f, 0.5f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.2f,
+	-0.5f,  0.5f,  0.5f, 0.5f, 0.2f, 0.1f,
+	-0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.5f
+};
+
 int indices[] = {
 	0, 1, 3, // First triangle
 	1, 2, 3  // Second triangle
@@ -91,6 +136,14 @@ int main()
 		return -1;
 	}
 
+	// The Z-buffer of OpenGL allows OpenGL to decide when to draw over a pixel
+	// and when not to, based on depth testing.
+	// OpenGL stores all depth information in a z-buffer, known as the "depth buffer".
+	// GLFW automatically creates such a buffer for you.
+	// However, we have to explicitly enable depth testing.
+	// We do that here.
+	glEnable(GL_DEPTH_TEST);
+
 	// We register the OpenGL Debug Message callback
 	// This feature has been in the OpenGL core profile since 4.3
 	// Before that, it's an extension by the name of "KHR_Debug"
@@ -122,15 +175,15 @@ int main()
 	// Here we copy our vertice data to the GPU, to our newly created buffer object.
 	// We also hint to OpenGL that the date most likely won't change. This means that OpenGL can make some assumptions
 	// about the data which can be used to optimize it.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCube), verticesCube, GL_STATIC_DRAW);
 
 	// With Element Buffer Objects, we can give OpenGL a list of indices, describing the order
 	// In which triangles should be rendered from the vertices array.
 	unsigned int EBO;
-	glGenBuffers(1, &EBO);
+	// glGenBuffers(1, &EBO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// In the vertex shader we specified that location 0 accepted a 3D vector as input
 	// OpenGL is very flexible when it comes to how to feed input into that location
@@ -176,11 +229,13 @@ int main()
 
 	glClearColor(0.4f, 0.58f, 0.92f, 1.0f);
 	while (!glfwWindowShouldClose(mainWindow.get())) {
-		glClear(GL_COLOR_BUFFER_BIT);
+		// Besides clearing the color buffer, we also want to clear the
+		// depth buffer, otherwise depth information from the previous frame stays in the buffer.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Our model matrix
 		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 1.0f));
 
 		// Our view matrix
 		glm::mat4 view = glm::mat4(1.0f);
@@ -194,7 +249,8 @@ int main()
 		myShader.setMatrix("view", view);
 		myShader.setMatrix("projection", projection);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		rotation += 0.5;
 
