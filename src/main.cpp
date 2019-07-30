@@ -119,7 +119,7 @@ int main()
 	int windowHeight = 0;
 	glfwGetWindowSize(mainWindow.get(), &windowWidth, &windowHeight);
 
-	std::unique_ptr<const GLFWvidmode> 
+	const std::unique_ptr<const GLFWvidmode> 
 		glfwVideoMode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
 
 	glfwSetWindowPos(
@@ -148,8 +148,6 @@ int main()
 	// This feature has been in the OpenGL core profile since 4.3
 	// Before that, it's an extension by the name of "KHR_Debug"
 	glDebugMessageCallback(openGlErrorCallback, nullptr);
-
-	glViewport(0, 0, 800, 600);
 
 	// OpenGl Core REQUIRES us to use Vertex Array Objects (VAOs)
 	// VAOs are OpenGL objects which will save state related to these calls:
@@ -227,6 +225,8 @@ int main()
 
 	float rotation = 0;
 
+	float radius = 5.0f;
+
 	glClearColor(0.4f, 0.58f, 0.92f, 1.0f);
 	while (!glfwWindowShouldClose(mainWindow.get())) {
 		// Besides clearing the color buffer, we also want to clear the
@@ -238,8 +238,15 @@ int main()
 		trans = glm::rotate(trans, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 1.0f));
 
 		// Our view matrix
+		float camX = (sin(glfwGetTime()) * radius) + sin(glfwGetTime()) * 3;
+		float camZ = (cos(glfwGetTime()) * radius) + sin(glfwGetTime()) * 3;
+
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = glm::lookAt(
+		        glm::vec3(camX, 2.0f, camZ),
+		        glm::vec3(0.0f, 0.0f, 0.0f),
+		        glm::vec3(0.0f, 1.0f, 0.0f)
+		        );
 
 		// Our projection matrix
 		glm::mat4 projection = glm::mat4(1.0f);
@@ -252,7 +259,7 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		rotation += 0.5;
+		// rotation += 0.5;
 
 		glfwSwapBuffers(mainWindow.get());
 
